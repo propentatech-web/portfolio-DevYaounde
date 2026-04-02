@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HACHIMI Isaac </title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+    :root {
+      --noir:    #0d0d0d;
+      --blanc:   #f5f2ec;
+      --accent:  #c8a96e;
+      --accent2: #e8d5b0;
+      --gris:    #888;
+      --card:    #1a1a1a;
+      --border:  rgba(200,169,110,0.25);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--noir);
+      color: var(--blanc);
+      font-family: 'DM Sans', Georgia, serif;
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--noir); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+    /* ════════════════════════════════════════
+       NAV — FLEXBOX
+    ════════════════════════════════════════ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 2.5rem;
+      background: rgba(13,13,13,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      transition: padding 0.3s;
+    }
+    nav.scrolled { padding: 0.8rem 2.5rem; }
+
+    .nav-logo {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 3px;
+      text-decoration: none;
+    }
+
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav ul a {
+      text-decoration: none;
+      color: var(--blanc);
+      font-size: 0.82rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      position: relative;
+      transition: color 0.3s;
+    }
+    nav ul a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
+    nav ul a:hover { color: var(--accent); }
+    nav ul a:hover::after { width: 100%; }
+
+    .burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .burger span {
+      display: block;
+      width: 26px; height: 2px;
+      background: var(--blanc);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; }
+    .burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ════════════════════════════════════════
+       HERO — FLEXBOX : texte gauche | photo droite
+    ════════════════════════════════════════ */
+    header {
+      min-height: 100vh;
+      display: flex;               /* FLEXBOX */
+      flex-direction: row;         /* côte à côte */
+      justify-content: space-between;
+      align-items: center;
+      padding: 8rem 3rem 4rem;
+      gap: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: -120px; right: -120px;
+      width: 550px; height: 550px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,169,110,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-text {
+      flex: 1;                     /* occupe tout l'espace gauche */
+      animation: fadeUp 0.8s ease both;
+    }
+    .hero-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 0.4rem 1.1rem;
+      border-radius: 50px;
+      margin-bottom: 1.8rem;
+    }
+    .hero-text h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      line-height: 1.05;
+      font-weight: 700;
+    }
+    .hero-text h1 em { font-style: italic; font-weight: 400; color: var(--accent); }
+    .hero-subtitle {
+      font-size: 0.98rem;
+      color: var(--gris);
+      margin: 1.5rem 0 2.5rem;
+      max-width: 420px;
+      line-height: 1.8;
+    }
+    .hero-cta {
+      display: inline-block;
+      padding: 0.9rem 2.2rem;
+      background: var(--accent);
+      color: var(--noir);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.88rem;
+      letter-spacing: 1px;
+      border-radius: 5px;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .hero-cta:hover { background: var(--accent2); transform: translateY(-2px); }
+
+    /* Photo → order:2 = forcée à droite */
+    .hero-image {
+      flex-shrink: 0;
+      order: 2;                    /* toujours à droite */
+      display: flex;
+      justify-content: flex-end;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+    .photo-frame {
+      width: 310px; height: 370px;
+      border-radius: 180px 180px 100px 100px;
+      overflow: hidden;
+      border: 3px solid var(--border);
+      position: relative;
+    }
+    .photo-frame::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 60%, rgba(200,169,110,0.12));
+    }
+    .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-placeholder {
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 4rem; color: var(--accent); opacity: 0.5;
+    }
+
+    /* ===== SECTIONS COMMUNES ===== */
+    section {
+      padding: 6rem 3rem;
+      max-width: 1050px;
+      margin: 0 auto;
+    }
+    .section-tag {
+      display: block;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.9rem, 4vw, 3rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 3rem;
+    }
+    .section-title em { font-style: italic; font-weight: 400; color: var(--accent); }
+
+    /* ════════════════════════════════════════
+       QUI SUIS-JE — GRID 2 colonnes
+       col 1 : texte | col 2 : stats
+    ════════════════════════════════════════ */
+    .about-grid {
+      display: grid;                         /* GRID */
+      grid-template-columns: 1.3fr 0.7fr;   /* texte large | stats étroit */
+      gap: 3rem 4rem;
+      align-items: start;
+    }
+    .about-grid p { color: #ccc; margin-bottom: 1.1rem; font-size: 0.97rem; }
+
+    .stats { display: flex; flex-direction: column; gap: 1.2rem; }
+    .stat-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .stat-item:hover { border-color: var(--accent); transform: translateX(5px); }
+    .stat-icon {
+      width: 38px; height: 38px;
+      background: rgba(200,169,110,0.1);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .stat-text { font-size: 0.92rem; color: var(--blanc); }
+    .stat-text small { display: block; color: var(--gris); font-size: 0.75rem; margin-top: 2px; }
+
+    /* ════════════════════════════════════════
+       CE QUE JE SAIS FAIRE — GRID auto-fit
+    ════════════════════════════════════════ */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 1.4rem;
+    }
+    .skill-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.8rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+    .skill-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(to right, var(--accent), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .skill-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 16px 36px rgba(200,169,110,0.07); }
+    .skill-card:hover::before { opacity: 1; }
+    .skill-icon { font-size: 1.7rem; margin-bottom: 0.9rem; display: block; }
+    .skill-card h3 { font-family: 'Playfair Display', Georgia, serif; font-size: 1.1rem; margin-bottom: 0.6rem; }
+    .skill-card p { color: var(--gris); font-size: 0.85rem; line-height: 1.55; }
+
+    /* ════════════════════════════════════════
+       MON CHEMIN — GRID externe : 1 colonne (cartes empilées)
+                    GRID interne : 2 colonnes (date | contenu)
+    ════════════════════════════════════════ */
+
+    /* GRID externe : 1 seule colonne → cartes l'une sous l'autre */
+    .parcours-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.4rem;
+    }
+
+    /* Chaque carte = GRID interne 2 colonnes */
+    .parcours-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.8rem 2rem;
+      position: relative;
+      overflow: hidden;
+
+      display: grid;
+      grid-template-columns: 90px 1fr;   /* date étroite | contenu large */
+      column-gap: 2rem;
+      align-items: center;
+
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s;
+    }
+    .parcours-card.visible { opacity: 1; transform: translateY(0); }
+    .parcours-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(to right, var(--accent), transparent);
+    }
+    .parcours-card:hover { border-color: var(--accent); }
+
+    /* Colonne gauche : date + label */
+    .card-date {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.3rem;
+      border-right: 1px solid var(--border);
+      padding-right: 1.5rem;
+    }
+    .card-annee {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .card-label {
+      font-size: 0.66rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gris);
+    }
+
+    /* Colonne droite : titre + description */
+    .card-contenu h3 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.1rem;
+      margin-bottom: 0.45rem;
+      color: var(--blanc);
+    }
+    .card-contenu p { color: #aaa; font-size: 0.87rem; line-height: 1.6; }
+
+    /* ===== CONTACT ===== */
+    #contact { text-align: center; max-width: 650px; }
+    #contact > p { color: var(--gris); margin-bottom: 2.5rem; }
+    .sep { width: 50px; height: 1px; background: var(--accent); margin: 0 auto 2.5rem; opacity: 0.4; }
+
+    .contact-form { display: flex; flex-direction: column; gap: 1.1rem; text-align: left; }
+    .form-group label {
+      display: block; font-size: 0.75rem; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--gris); margin-bottom: 0.45rem;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+      color: var(--blanc);
+      font-family: 'DM Sans', Georgia, serif;
+      font-size: 0.93rem;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(200,169,110,0.08);
+    }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .form-submit {
+      width: 100%; padding: 1rem;
+      background: var(--accent); color: var(--noir);
+      border: none; border-radius: 8px;
+      font-family: 'DM Sans', Georgia, serif;
+      font-weight: 500; font-size: 0.93rem; letter-spacing: 1px;
+      cursor: pointer; margin-top: 0.4rem;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .form-submit:hover { background: var(--accent2); transform: translateY(-2px); }
+    .form-confirm {
+      display: none; padding: 1.8rem;
+      background: rgba(200,169,110,0.07);
+      border: 1px solid var(--border); border-radius: 12px;
+      color: var(--accent); font-size: 0.97rem; text-align: center;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-logo { font-family: 'Playfair Display', Georgia, serif; font-size: 1.4rem; color: var(--accent); font-weight: 700; }
+    footer p { color: var(--gris); font-size: 0.8rem; }
+    footer a { color: var(--accent); text-decoration: none; font-size: 0.83rem; transition: opacity 0.2s; }
+    footer a:hover { opacity: 0.7; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(25px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== RESPONSIVE MOBILE ===== */
+    @media (max-width: 768px) {
+      .burger { display: flex; }
+      nav ul {
+        display: none; flex-direction: column;
+        position: absolute; top: 100%; left: 0; right: 0;
+        background: rgba(13,13,13,0.97);
+        padding: 2rem; gap: 1.4rem;
+        border-bottom: 1px solid var(--border);
+      }
+      nav ul.open { display: flex; }
+
+      /* Hero : flex passe en colonne */
+      header { flex-direction: column; padding: 6rem 1.5rem 3rem; text-align: center; }
+      .hero-image { display: none; }
+      .hero-subtitle { max-width: 100%; margin-left: auto; margin-right: auto; }
+
+      section { padding: 4rem 1.5rem; }
+
+      /* Qui suis-je : 1 colonne */
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+
+      /* Mon chemin : carte interne passe en 1 colonne */
+      .parcours-card {
+        grid-template-columns: 1fr;
+      }
+      .card-date {
+        flex-direction: row; align-items: center; gap: 1rem;
+        border-right: none; border-bottom: 1px solid var(--border);
+        padding-right: 0; padding-bottom: 0.8rem; margin-bottom: 0.8rem;
+      }
+
+      footer { flex-direction: column; text-align: center; padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV (FLEXBOX) -->
+  <nav id="navbar">
+    <a class="nav-logo" href="#">HI</a>
+    <button class="burger" id="burger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul id="nav-links">
+      <li><a href="#apropos">À propos</a></li>
+      <li><a href="#competences">Compétences</a></li>
+      <li><a href="#parcours">Parcours</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO (FLEXBOX : texte gauche, photo droite) -->
+  <header>
+    <div class="hero-text">
+      <span class="hero-tag">Passionné&amp; Développeur</span>
+      <h1>HACHIMI<br><em>Isaac</em></h1>
+      <p class="hero-subtitle">
+        Passionné par la création d'expériences web modernes et accessibles.
+        En route vers le développement front-end.
+      </p>
+      <a href="#contact" class="hero-cta">Me contacter</a>
+    </div>
+
+    <div class="hero-image">
+      <div class="photo-frame">
+        <img src="isaac.jpg" alt="HACIMI Isaac">
+        <!-- Pour ajouter ta photo : remplace la ligne au-dessus par :
+             <img src="me1.jpeg" alt="HACHIMI Isaac"> -->
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- QUI SUIS-JE (GRID 2 colonnes : texte | stats) -->
+    <section id="apropos">
+      <span class="section-tag">À propos</span>
+      <h2 class="section-title">Qui suis-je ?</h2>
+
+      <div class="about-grid">
+        <!-- Colonne gauche : texte -->
+        <div>
+          <p>
+            Je suis étudiant en première année d'informatique, animé par une vraie
+            curiosité pour le web et ses technologies. Je m'intéresse particulièrement
+            à la conception d'interfaces élégantes, à l'expérience utilisateur, et aux
+            bonnes pratiques du développement front-end.
+          </p>
+          <p>
+            Mon objectif : devenir développeur front-end capable de transformer des
+            idées en expériences digitales mémorables.
+          </p>
+        </div>
+        <!-- Colonne droite : stats -->
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-icon">🎓</div>
+            <div class="stat-text">1<sup>ère</sup> année d'informatique<small>Licence en cours</small></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">⚙️</div>
+            <div class="stat-text">3+ technologies maîtrisées<small>HTML, Git, GitHub...</small></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">♾️</div>
+            <div class="stat-text">Envie d'apprendre<small>Toujours en progression</small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CE QUE JE SAIS FAIRE (GRID auto-fit) -->
+    <section id="competences">
+      <span class="section-tag">Compétences</span>
+      <h2 class="section-title">Ce que je sais faire</h2>
+
+      <div class="skills-grid">
+        <div class="skill-card"><span class="skill-icon">🌐</span><h3>HTML</h3><p>Structure sémantique, accessibilité, bonnes pratiques.</p></div>
+        <div class="skill-card"><span class="skill-icon">🎨</span><h3>CSS</h3><p>Mise en page, Flexbox, Grid, animations.</p></div>
+        <div class="skill-card"><span class="skill-icon">🌿</span><h3>Git</h3><p>Versioning, branches, gestion de l'historique.</p></div>
+        <div class="skill-card"><span class="skill-icon">🐙</span><h3>GitHub</h3><p>Collaboration, pull requests, hébergement de projets.</p></div>
+        <div class="skill-card"><span class="skill-icon">🤝</span><h3>Travail en équipe</h3><p>Communication, organisation, méthodes agiles.</p></div>
+        <div class="skill-card"><span class="skill-icon">🧩</span><h3>Résolution de problèmes</h3><p>Analyse, décomposition, logique algorithmique.</p></div>
+      </div>
+    </section>
+
+    <!-- MON CHEMIN (GRID colonne + GRID interne par carte) -->
+    <section id="parcours">
+      <span class="section-tag">Parcours</span>
+      <h2 class="section-title">Mon chemin</h2>
+
+      <!-- GRID externe : 1 colonne → cartes empilées verticalement -->
+      <div class="parcours-grid">
+
+        <!-- Chaque carte : GRID interne 2 colonnes (date | contenu) -->
+        <div class="parcours-card">
+          <div class="card-date">
+            <span class="card-annee">2025</span>
+            <span class="card-label">Diplôme</span>
+          </div>
+          <div class="card-contenu">
+            <h3>Baccalauréat scientifique</h3>
+            <p>Obtention du baccalauréat avec spécialité scientifique, premier pas vers l'informatique.</p>
+          </div>
+        </div>
+
+        <div class="parcours-card">
+          <div class="card-date">
+            <span class="card-annee">2026</span>
+            <span class="card-label">Formation</span>
+          </div>
+          <div class="card-contenu">
+            <h3>L1 Informatique</h3>
+            <p>Première année de licence informatique, initiation à l'algorithmique, aux langages et aux systèmes.</p>
+          </div>
+        </div>
+
+        <div class="parcours-card">
+          <div class="card-date">
+            <span class="card-annee">2026</span>
+            <span class="card-label">En cours</span>
+          </div>
+          <div class="card-contenu">
+            <h3>Formation en développement web</h3>
+            <p>Apprentissage du HTML, CSS, et des bases du développement front-end moderne.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <span class="section-tag">Contact</span>
+      <h2 class="section-title">Travaillons<br><em>ensemble</em></h2>
+      <div class="sep"></div>
+      <p>Une question, une idée de projet, ou simplement envie d'échanger ? N'hésitez pas à m'écrire.</p>
+
+      <form class="contact-form" id="contactForm" novalidate>
+        <div class="form-group">
+          <label for="nom">Nom complet</label>
+          <input type="text" id="nom" name="nom" placeholder="Votre nom complet">
+        </div>
+        <div class="form-group">
+          <label for="email">Adresse email</label>
+          <input type="email" id="email" name="email" placeholder="votre@email.com">
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Bonjour Isaac, je voulais..."></textarea>
+        </div>
+        <button type="submit" class="form-submit">Envoyer le message ✉️</button>
+      </form>
+      <div class="form-confirm" id="formConfirm">
+        ✅ Merci ! Votre message a bien été envoyé. Je vous répondrai dès que possible.
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-logo">HI</span>
+    <p>&copy; 2026 — HACHIMI Isaac — Tous droits réservés</p>
+    <div>
+      <a href="https://github.com/Noubissie237" target="_blank">GitHub</a>
+      &nbsp;|&nbsp;
+      <a href="mailto:isaac@email.com">Email</a>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT (niveau débutant) -->
+  <script>
+
+    // 1. MENU BURGER : ouvrir/fermer sur mobile
+    var burger   = document.getElementById('burger');
+    var navLinks = document.getElementById('nav-links');
+
+    burger.addEventListener('click', function() {
+      burger.classList.toggle('open');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach(function(lien) {
+      lien.addEventListener('click', function() {
+        burger.classList.remove('open');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    // 2. NAVBAR : rétrécit quand on défile
+    var navbar = document.getElementById('navbar');
+
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // 3. PARCOURS : cartes apparaissent au scroll
+    var cartes = document.querySelectorAll('.parcours-card');
+
+    function verifierVisibilite() {
+      cartes.forEach(function(carte) {
+        var pos = carte.getBoundingClientRect();
+        // Si la carte entre dans la zone visible de l'écran
+        if (pos.top < window.innerHeight - 60) {
+          carte.classList.add('visible');
+        }
+      });
+    }
+
+    verifierVisibilite();
+    window.addEventListener('scroll', verifierVisibilite);
+
+    // 4. FORMULAIRE : validation + message de confirmation
+    var formulaire   = document.getElementById('contactForm');
+    var confirmation = document.getElementById('formConfirm');
+
+    formulaire.addEventListener('submit', function(e) {
+      e.preventDefault(); // empêche le rechargement
+
+      var nom     = document.getElementById('nom').value.trim();
+      var email   = document.getElementById('email').value.trim();
+      var message = document.getElementById('message').value.trim();
+
+      if (nom === '' || email === '' || message === '') {
+        alert('Veuillez remplir tous les champs avant d\'envoyer.');
+        return;
+      }
+
+      formulaire.style.display = 'none';
+      confirmation.style.display = 'block';
+    });
+
+  </script>
+</body>
+</html>
